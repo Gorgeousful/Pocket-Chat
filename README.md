@@ -12,7 +12,7 @@
 ---
 <h1 align="center">🌔01<br>准备工作<h1>
 
-
+配置环境如下：
 ```bash
 sudo apt-get install xclip
 pip install openai pynput PySide6
