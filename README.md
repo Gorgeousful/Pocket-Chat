@@ -1,7 +1,7 @@
 # Pocket-Chat
 :rocket: 最近使用python自研了一个便利性极佳的随身聊天应用`Pocket Chat`，可以使用快捷键在任意位置拾取光标选取的内容与AI交互，适合于简单的Chat任务，比如单词翻译、名词查询等。目前仅对linux系统下的应用做了开发，其他系统也可以使用，但会少些许功能。
 
-![Uploading simplescreenrecorder.gif…]()
+<img src='./pocket_chat.gif'>
 
 
 注意，这里使用的大模型API来自于：[DeepSeek官网](https://platform.deepseek.com)。因此也使用该API的规则(对标openai)进行模型嵌入。如果使用其他模型，则需要对源码中`ChatAPI`类进行修改。
