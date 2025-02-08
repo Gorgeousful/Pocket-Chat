@@ -3,8 +3,8 @@
 #* Time: 2025-02-08
 
 #? 使用说明:
-#? 在运行脚本 python3 chat.py 这是先决条件（可以根据操作系统创建桌面图标来运行）
-#? 按快捷键 <ctrl>+<f1> 即可在光标处弹出对话框
+#? 运行脚本 python3 chat.py 这是先决条件（可以根据操作系统创建桌面图标来运行）
+#? 按快捷键 <ctrl>+<f1> 即可在光标处弹出对话框 (源码可以更改设置)
 #? 输入问题按Enter发送，按Esc退出
 #? 按Esc退出后，再次按快捷键 <ctrl>+<f1> 即可在光标处弹出对话框
 #? 另外Linux支持打开窗口时，将选中的文本自动填充到输入框
@@ -13,7 +13,7 @@
 API_URL = "https://api.deepseek.com/v1" #DeepSeek API URL  其他模型API也行
 API_KEY = "sk-c1f60975345d46c496d6e7ef0faf232c" #DeepSeek API Key  其他模型API也行
 MODEL = "deepseek-chat" #默认是DeepSeekV3模型，可也用DeepSeekR1，即deepseek-reasoner。其他模型也行。
-TEMPERATURE = 1.0 #值约高，回答越随机。
+TEMPERATURE = 1.0 #值越高，回答越随机。
 SHORTCUT = "<ctrl>+<f1>" #对话框快捷键
 #================================================
 
@@ -57,6 +57,9 @@ class ChatAPI:
         except Exception as e:
             callback(f"\nError: {str(e)}")
             return None
+        except TimeoutError as e:
+            callback(f"\n请求超时 ({TIMEOUT}秒)")
+            return None
 
 class StreamSignals(QObject):
     update_text = Signal(str)
@@ -85,7 +88,7 @@ class QADialog(QDialog):
         self.question_entry.returnPressed.connect(self.get_answer)
         self.question_entry.setPlaceholderText("在此输入问题，按Enter发送，按Esc退出...")
         self.question_entry.setFont(QFont("微软雅黑", 10))
-        
+
         self.stop_button = QPushButton("停止")
         self.stop_button.clicked.connect(self.stop_answer)
         self.stop_button.setEnabled(False)
@@ -242,6 +245,11 @@ class QADialog(QDialog):
         x = min(cursor_pos.x(), QApplication.primaryScreen().size().width() - window_size.width())
         y = min(cursor_pos.y(), QApplication.primaryScreen().size().height() - window_size.height())
         self.move(x, y)
+    
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.activateWindow()
+        self.question_entry.setFocus()
 
 def get_global_selection():
     """获取全局选中的文本"""
@@ -265,7 +273,6 @@ def show_qa_dialog():
     dialog = QADialog()
     text = get_global_selection().strip()
     dialog.question_entry.setText(text)
-    dialog.question_entry.setFocus()
     dialog.show()
     app.exec()
 
